@@ -6,6 +6,7 @@ class Character:
     def __init__(self, ai_game):
         """Initialize the character and set it's starting position."""
         self.screen = ai_game.screen
+        self.settings = ai_game.settings
         self.screen_rect = ai_game.screen.get_rect()
 
         # Load the character png and it's rect.
@@ -15,16 +16,23 @@ class Character:
         # Start each new character at the bottom center of the screen.
         self.rect.midbottom = self.screen_rect.midbottom
 
+        # Store a decimal value for the character's horizontal position.
+        self.x = float(self.rect.x)
+
         # Movement flag; start with a character that's not moving.
         self.moving_right = False
         self.moving_left = False
 
     def update(self):
         """Update the character's position based on movement flags."""
-        if self.moving_right:
-            self.rect.x += 2  # Move character right
-        if self.moving_left:
-            self.rect.x -= 2  # Move character left
+        # Update the character's x value, not the rect.
+        if self.moving_right and self.rect.right < self.screen_rect.right:
+            self.x += self.settings.character_speed  # Move character right
+        if self.moving_left and self.rect.left > 0:
+            self.x -= self.settings.character_speed  # Move character left
+
+        # Update the rect object from the stored x value.
+        self.rect.x = self.x
 
     def blitme(self):
         """Draw the character at its current location."""
